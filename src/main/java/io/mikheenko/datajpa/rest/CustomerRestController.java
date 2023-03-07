@@ -2,12 +2,10 @@ package io.mikheenko.datajpa.rest;
 
 import io.mikheenko.datajpa.model.Customer;
 import io.mikheenko.datajpa.service.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -15,11 +13,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/customers/")
-public class CustomerRestControllerV1 {
-    @Autowired
-    private CustomerService customerService;
-    @RequestMapping(value = "{id}",
-            method = RequestMethod.GET,
+public class CustomerRestController {
+    private final CustomerService customerService;
+
+    public CustomerRestController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+    @GetMapping(value = "{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Customer> getCustomer(@PathVariable("id") Long customerId){
         if (customerId == null){
@@ -31,10 +32,9 @@ public class CustomerRestControllerV1 {
         }
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
-    @RequestMapping(value = "",
-            method = RequestMethod.POST,
+    @PostMapping(value = "",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> saveCustomer(@RequestBody @Validated Customer customer){
+    public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer){
         HttpHeaders headers = new HttpHeaders();
         if (customer == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -42,10 +42,9 @@ public class CustomerRestControllerV1 {
         this.customerService.save(customer);
         return new ResponseEntity<>(customer,headers,HttpStatus.CREATED);
     }
-    @RequestMapping(value = "",
-            method = RequestMethod.PUT,
+    @PutMapping(value = "",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> updateCustomer(@RequestBody @Validated Customer customer, UriComponentsBuilder builder){
+    public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer, UriComponentsBuilder builder){
         HttpHeaders headers = new HttpHeaders();
         if (customer == null){
             return new ResponseEntity<Customer>(HttpStatus.BAD_REQUEST);
@@ -53,8 +52,7 @@ public class CustomerRestControllerV1 {
         this.customerService.save(customer);
         return new ResponseEntity<>(customer,headers,HttpStatus.OK);
     }
-    @RequestMapping(value = "{id}",
-            method = RequestMethod.DELETE,
+    @DeleteMapping(value = "{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Customer> deleteCustomer(@PathVariable("id") Long id){
         var customer = this.customerService.getById(id);
@@ -65,8 +63,7 @@ public class CustomerRestControllerV1 {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "",
-            method = RequestMethod.GET,
+    @GetMapping(value = "",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Customer>> getAllCustomers(){
         var customers = this.customerService.getAll();
