@@ -11,8 +11,11 @@ import java.util.List;
 @Service
 @Slf4j
 public class CustomerServiceImpl implements CustomerService{
-    @Autowired
-    private CustomerRepository customerRepository;
+
+    private final CustomerRepository customerRepository;
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
     @Override
     public Customer getById(Long id) {
         log.info("IN CustomerServiceImpl getByID {}", id);

@@ -2,6 +2,7 @@ package io.mikheenko.datajpa.rest;
 
 import io.mikheenko.datajpa.model.Customer;
 import io.mikheenko.datajpa.service.CustomerService;
+import org.hibernate.SessionFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,7 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/customers/")
+@RequestMapping("/api/customers/")
 public class CustomerRestController {
     private final CustomerService customerService;
 
@@ -30,7 +31,10 @@ public class CustomerRestController {
         if (customer == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+//        return new ResponseEntity<>(customer, HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(customer);
     }
     @PostMapping(value = "",
             produces = MediaType.APPLICATION_JSON_VALUE)
